@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search flavors..." value="{{ request.GET.q }}">
+                <select name="season" class="form-select">
+                    <option value="">All Seasons</option>
+                    {% for code, name in seasons %}
+                    <option value="{{ code }}" {% if request.GET.season == code %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for flavor in flavors %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header" style="background-color: '{{ flavor.color }}'; height: 100px;"></div>
+            <div class="card-body">
+                <h5 class="card-title">{{ flavor.name }}</h5>
+                <p class="card-text">{{ flavor.description|truncatewords:20 }}</p>
+                <p class="card-text"><strong>${{ flavor.price }}</strong></p>
+                <a href="{% url 'flavor_detail' flavor.pk %}" class="btn btn-info">Details</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'add_to_cart' flavor.pk %}" class="btn btn-success">Add to Cart</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <p>No flavors found.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
